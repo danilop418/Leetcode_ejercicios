@@ -1,1 +1,117 @@
+Mediana de Dos Arrays Ordenados
 
+Difícil
+
+Enunciado
+
+Dadas dos listas ordenadas nums1 y nums2 de tamaños m y n respectivamente, devuelve la mediana de las dos listas ordenadas.
+
+La complejidad temporal total debe ser O(log (m+n)).
+
+Ejemplo 1
+
+Entrada:
+nums1 = [1,3], nums2 = [2]
+Salida:
+2.00000
+Explicación:
+El array combinado sería [1,2,3] y la mediana es 2.
+
+Ejemplo 2
+
+Entrada:
+nums1 = [1,2], nums2 = [3,4]
+Salida:
+2.50000
+Explicación:
+El array combinado sería [1,2,3,4] y la mediana es (2 + 3) / 2 = 2.5.
+
+Restricciones
+
+nums1.length == m
+
+nums2.length == n
+
+0 <= m <= 1000
+
+0 <= n <= 1000
+
+1 <= m + n <= 2000
+
+-10^6 <= nums1[i], nums2[i] <= 10^6
+
+
+Solución en Kotlin
+
+Autor: daniel_lopgon
+
+Intuición
+
+Como ambos arrays de entrada ya están ordenados, podemos encontrar la mediana sin tener que fusionarlos completamente.
+Podemos simular el proceso de mezcla del algoritmo merge sort: comparar los elementos actuales de ambos arrays y elegir el menor, avanzando el puntero correspondiente.
+Solo necesitamos seguir este proceso hasta alcanzar el elemento central del orden combinado.
+
+Enfoque
+
+Usamos dos punteros i y j para recorrer nums1 y nums2.
+En cada paso, seleccionamos el menor de los dos elementos actuales y avanzamos el puntero correspondiente.
+Llevamos un contador de cuántos elementos hemos procesado y guardamos el último elemento (prev) para manejar el caso en el que el número total de elementos sea par.
+
+Cuando el contador alcanza el índice central del total combinado:
+
+Si el número total de elementos es impar, devolvemos el elemento actual como la mediana.
+
+Si es par, devolvemos el promedio entre el elemento actual y el anterior.
+
+Este enfoque evita construir un nuevo array combinado y se detiene en cuanto tenemos suficientes elementos para determinar la mediana.
+
+Complejidad
+
+Complejidad temporal:
+O(m + n) en el peor caso, donde m y n son las longitudes de los dos arrays.
+Sin embargo, podemos detenernos cuando lleguemos a la mitad, por lo que en promedio recorrerá aproximadamente (m+n)/2 elementos.
+
+Complejidad espacial:
+O(1) porque solo usamos unas pocas variables adicionales y no creamos estructuras de datos extra.
+
+Código
+class Solution {
+    fun findMedianSortedArrays(nums1: IntArray, nums2: IntArray): Double {
+        var i = 0
+        var j = 0
+        var count = 0
+        val target = nums1.size + nums2.size
+        var prev = 0
+
+        while (true) {
+            var n = 0
+
+            var x = Int.MAX_VALUE
+            var y = Int.MAX_VALUE
+
+            if (i < nums1.size) x = nums1[i]
+            if (j < nums2.size) y = nums2[j]
+
+            if (x == Int.MAX_VALUE && y == Int.MAX_VALUE) break
+
+            if (x < y) {
+                n = x
+                i++
+            } else {
+                n = y
+                j++
+            }
+
+            if (count == target / 2) {
+                if (target % 2 != 0) {
+                    return n.toDouble()
+                } else {
+                    return (prev + n) / 2.0
+                }
+            }
+            prev = n
+            count++
+        }
+        return 0.0
+    }
+}
